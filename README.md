@@ -1,10 +1,10 @@
-This is a simple program to get profile metrics of some of githubs api.
+This is a simple program to get profile metrics from some of github's api.
 
-To get increase the rate limit for the github api you can pass in your github credentials by setting environment variables ***GIT_USERNAME*** and ***GIT_PASSWORD***.
+There is a rate limit to the amount of requests you can send to github's api. To increase the rate limit pass in your github credentials by setting the environment variables ***GIT_USERNAME*** and ***GIT_PASSWORD***.
 
 This program uses the library [requests](http://docs.python-requests.org/en/latest/).
 
-The program takes in a commandline argument of `-n` to determine how many requests should the program make.
+The program takes in a commandline argument of `-n` if you would like to specify how many times to repeat the request.
 
 You can run the program via the command line:
 
