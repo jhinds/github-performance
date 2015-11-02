@@ -41,6 +41,9 @@ class PerformanceProfiler():
             self.print_metrics([result[0]][0], [result[1]][0][0], [result[1]][0][1], [result[1]][0][2])
         self.get_page_profiles(fastest)
 
+    def check_git_creds(self):
+        response = requests.get('https://api.github.com', auth=self.auth)
+        response.raise_for_status()
 
     def get_page_profiles(self, fastest):
         print('###### Suite 3: Page Performance ######\n')
@@ -71,12 +74,6 @@ class PerformanceProfiler():
         response = requests.get(url=url, headers=self.headers, params=params, auth=self.auth)
         return response
 
-    def find_angular_repos(self):
-        return self.search(q='angular')
-
-    def find_angular_coffee_script_repos(self):
-        return self.search(q=['angular', {'language': 'coffeescript'}])
-
     def print_metrics(self, api, mean, std_dv, failures=0):
         if failures:
             print('API: %s \n\nMEAN REQ TIME: %d ms\n\nALL SUCCESS: false\n\nNUM FAILURES: %s\n\nSTD DEV: %d ms\n\n' % (api, mean, failures, std_dv))
@@ -87,8 +84,6 @@ class PerformanceProfiler():
         request_time_list = []
         failures = 0
         for i in range(0, n):
-            print('aaapaidoefw')
-            print(i)
             response = method(**kwargs)
             request_time_list.append(response.elapsed.microseconds/1000)
             if response.status_code is not 200:
@@ -98,10 +93,11 @@ class PerformanceProfiler():
         return mean, pstd_dv, failures
 
     def run_all(self):
+        self.check_git_creds()
         print('###### Suite 1: Angular ######\n')
-        mean, pstd_dv, failures = self.run_suite(self.find_angular_repos)
+        mean, pstd_dv, failures = self.run_suite(self.search, q='angular')
         self.print_metrics('Find Angular Repos', mean, pstd_dv, failures)
-        mean, pstd_dv, failures = self.run_suite(self.find_angular_coffee_script_repos)
+        mean, pstd_dv, failures = self.run_suite(self.search, q=['angular', {'language': 'coffeescript'}])
         self.print_metrics('Find Angular Repos with CoffeeScript', mean, pstd_dv, failures)
         self.sort_key_performance()
         mean, pstd_dv, failures = self.run_suite(self.get_django_repo, ref='master' )
